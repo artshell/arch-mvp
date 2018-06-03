@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">arch-mvp</string>
+    <string name="arch_mvp">arch_mvp_package</string>
+</resources>
