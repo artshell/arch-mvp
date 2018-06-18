@@ -7,5 +7,13 @@ modified from [MVP-Architecture-Components](https://github.com/armcha/MVP-Archit
 implementation 'com.arch.mvp:arch-mvp:1.0.1'
 ```
 
+##### In you `build.gradle` add setting
+```groovy
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+```
+
 #### Thanks!
 [armcha](https://github.com/armcha)
