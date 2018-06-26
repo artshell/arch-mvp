@@ -53,8 +53,8 @@ public class LazyArticleFragment extends BaseAnnotatedV4Fragment<LazyContract.Vi
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedState) {
-        super.onViewCreated(view, savedState);
         result = view.findViewById(R.id.tv_result);
+        super.onViewCreated(view, savedState);
     }
 
     @Override

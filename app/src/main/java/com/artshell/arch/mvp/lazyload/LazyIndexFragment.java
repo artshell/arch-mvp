@@ -39,8 +39,8 @@ public class LazyIndexFragment extends BaseAnnotatedV4Fragment<LazyContract.View
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedState) {
-        super.onViewCreated(view, savedState);
         result = view.findViewById(R.id.tv_result);
+        super.onViewCreated(view, savedState);
     }
 
     @Override
