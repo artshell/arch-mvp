@@ -32,7 +32,7 @@ public interface BaseLoadingContract {
         void handleError(Throwable throwable);
     }
 
-    interface Presenter extends BaseContract.Presenter<View> {
+    interface Presenter<V extends BaseLoadingContract.View> extends BaseContract.Presenter<V> {
 
     }
 }

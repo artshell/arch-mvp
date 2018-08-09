@@ -1,6 +1,5 @@
 package com.artshell.arch.mvp.annotation_impl;
 
-import com.arch.mvp.BaseContract;
 import com.arch.mvp.BaseLoadingContract;
 
 /**
@@ -11,7 +10,7 @@ public interface MasterContract {
         void openSubFragment();
     }
 
-    interface Presenter extends BaseContract.Presenter<View> {
+    interface Presenter extends BaseLoadingContract.Presenter<View> {
 
     }
 }

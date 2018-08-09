@@ -1,6 +1,5 @@
 package com.artshell.arch.mvp.reactive_stream_impl;
 
-import com.arch.mvp.BaseContract;
 import com.arch.mvp.BaseLoadingContract;
 
 /**
@@ -11,7 +10,7 @@ public interface ReactiveContract {
         void onNext(String value);
     }
 
-    interface Presenter extends BaseContract.Presenter<View> {
+    interface Presenter extends BaseLoadingContract.Presenter<View> {
         void requestAfterDelay(long delay);
     }
 }

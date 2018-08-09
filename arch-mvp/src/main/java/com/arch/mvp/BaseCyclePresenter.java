@@ -15,6 +15,7 @@
  */
 package com.arch.mvp;
 
+import android.arch.lifecycle.DefaultLifecycleObserver;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
 import android.support.annotation.CheckResult;
@@ -41,36 +42,66 @@ public class BaseCyclePresenter<V extends BaseContract.View> extends BasePresent
 
     private final Subject<Lifecycle.Event> presenterCycle = BehaviorSubject.<Lifecycle.Event>create().toSerialized();
 
+    /**
+     * 务须调用此方法, 来之{@link DefaultLifecycleObserver}接口中的方法访问修饰符只能是public
+     * 可以考虑继承{@link BasePresenter}实现扩展需求
+     * @param owner
+     */
     @Override
     public final void onCreate(@NonNull LifecycleOwner owner) {
         super.onCreate(owner);
         presenterCycle.onNext(Lifecycle.Event.ON_CREATE);
     }
 
+    /**
+     * 务须调用此方法, 来之{@link DefaultLifecycleObserver}接口中的方法访问修饰符只能是public
+     * 可以考虑继承{@link BasePresenter}实现扩展需求
+     * @param owner
+     */
     @Override
     public final void onStart(@NonNull LifecycleOwner owner) {
         super.onStart(owner);
         presenterCycle.onNext(Lifecycle.Event.ON_START);
     }
 
+    /**
+     * 务须调用此方法, 来之{@link DefaultLifecycleObserver}接口中的方法访问修饰符只能是public
+     * 可以考虑继承{@link BasePresenter}实现扩展需求
+     * @param owner
+     */
     @Override
     public final void onResume(@NonNull LifecycleOwner owner) {
         super.onResume(owner);
         presenterCycle.onNext(Lifecycle.Event.ON_RESUME);
     }
 
+    /**
+     * 务须调用此方法, 来之{@link DefaultLifecycleObserver}接口中的方法访问修饰符只能是public
+     * 可以考虑继承{@link BasePresenter}实现扩展需求
+     * @param owner
+     */
     @Override
     public final void onPause(@NonNull LifecycleOwner owner) {
         presenterCycle.onNext(Lifecycle.Event.ON_PAUSE);
         super.onPause(owner);
     }
 
+    /**
+     * 务须调用此方法, 来之{@link DefaultLifecycleObserver}接口中的方法访问修饰符只能是public
+     * 可以考虑继承{@link BasePresenter}实现扩展需求
+     * @param owner
+     */
     @Override
     public final void onStop(@NonNull LifecycleOwner owner) {
         presenterCycle.onNext(Lifecycle.Event.ON_STOP);
         super.onStop(owner);
     }
 
+    /**
+     * 务须调用此方法, 来之{@link DefaultLifecycleObserver}接口中的方法访问修饰符只能是public
+     * 可以考虑继承{@link BasePresenter}实现扩展需求
+     * @param owner
+     */
     @Override
     public final void onDestroy(@NonNull LifecycleOwner owner) {
         presenterCycle.onNext(Lifecycle.Event.ON_DESTROY);
