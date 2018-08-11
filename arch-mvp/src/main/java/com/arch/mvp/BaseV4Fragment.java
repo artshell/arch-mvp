@@ -217,7 +217,7 @@ public abstract class BaseV4Fragment<V extends BaseContract.View, P extends Base
     }
 
     /**
-     * 子类可实现次方法给View设置属性
+     * 子类可实现此方法给View设置属性
      */
     protected void applyAttributes() {
 
