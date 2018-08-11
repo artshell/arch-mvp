@@ -51,6 +51,7 @@ dependencies {
 
     api deps.rx.java
     api deps.rx.lifecycle
+    api deps.rx.lifecycle_android
 }
 
 publish {

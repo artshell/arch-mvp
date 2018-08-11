@@ -37,7 +37,7 @@ public class BaseAnnotatedV4Fragment<V extends BaseContract.View, P extends Base
         if (layoutResId != Viewable.LAYOUT_NOT_DEFINED) {
             return inflater.inflate(layoutResId, container, false);
         }
-        return null;
+        return super.onCreateView(inflater, container, savedState);
     }
 
     @SuppressWarnings("unchecked")

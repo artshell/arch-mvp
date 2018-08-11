@@ -16,18 +16,42 @@
 package com.arch.mvp;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.CallSuper;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+
+import com.trello.rxlifecycle2.LifecycleProvider;
+import com.trello.rxlifecycle2.LifecycleTransformer;
+import com.trello.rxlifecycle2.OutsideLifecycleException;
+import com.trello.rxlifecycle2.RxLifecycle;
+import com.trello.rxlifecycle2.android.ActivityEvent;
+
+import io.reactivex.Observable;
+import io.reactivex.functions.Function;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 
 /**
  * Created by Chatikyan on 20.05.2017.
+ * Modified by artshell
  */
 public abstract class BaseActivity<V extends BaseContract.View, P extends BaseContract.Presenter<V>>
-        extends AppCompatActivity implements BaseContract.View {
+        extends AppCompatActivity
+        implements BaseContract.View,
+        LifecycleProvider<ActivityEvent>,
+        Function<ActivityEvent, ActivityEvent> {
 
     protected P presenter;
+    
+    private final Subject<ActivityEvent> lifecycleEvent = PublishSubject.<ActivityEvent>create().toSerialized();
 
     @SuppressWarnings("unchecked")
     @CallSuper
@@ -35,27 +59,156 @@ public abstract class BaseActivity<V extends BaseContract.View, P extends BaseCo
     protected void onCreate(@Nullable Bundle savedState) {
         super.onCreate(savedState);
         BaseViewModel<V, P> viewModel = ViewModelProviders.of(this).get(BaseViewModel.class);
-        boolean isPresenterCreated = false;
+        boolean isCreated = false;
         if (viewModel.getPresenter() == null) {
             viewModel.setPresenter(initPresenter());
-            isPresenterCreated = true;
+            isCreated = true;
         }
         presenter = viewModel.getPresenter();
         presenter.attachView((V) this);
         presenter.attachLifecycle(getLifecycle());
-        if (isPresenterCreated) {
+        if (isCreated) {
             presenter.onPresenterCreated();
         }
+        lifecycleEvent.onNext(ActivityEvent.CREATE);
+    }
+
+    protected abstract P initPresenter();
+
+    @CallSuper
+    @Override
+    protected void onStart() {
+        super.onStart();
+        lifecycleEvent.onNext(ActivityEvent.START);
+    }
+
+    @CallSuper
+    @Override
+    protected void onResume() {
+        super.onResume();
+        lifecycleEvent.onNext(ActivityEvent.RESUME);
+    }
+
+    @CallSuper
+    @Override
+    protected void onPause() {
+        lifecycleEvent.onNext(ActivityEvent.PAUSE);
+        super.onPause();
+    }
+
+    @CallSuper
+    @Override
+    protected void onStop() {
+        lifecycleEvent.onNext(ActivityEvent.STOP);
+        super.onStop();
     }
 
     @CallSuper
     @Override
     protected void onDestroy() {
+        lifecycleEvent.onNext(ActivityEvent.DESTROY);
         super.onDestroy();
         presenter.detachLifecycle(getLifecycle());
         presenter.detachView();
         presenter = null;
     }
 
-    protected abstract P initPresenter();
+    /**
+     * 拦截触摸事件判断是否需要隐藏软键盘
+     * @param ev
+     * @return
+     */
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            View focusView = getCurrentFocus();
+            if (isShouldHideKeyboard(focusView, ev)) {
+                hideKeyboard(focusView.getWindowToken());
+            }
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    /**
+     * 隐藏软键盘
+     * @param token
+     */
+    protected void hideKeyboard(IBinder token) {
+        InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (manager != null) {
+            manager.hideSoftInputFromWindow(token, InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+    }
+
+    /**
+     * 根据EditText所在坐标和用户点击的坐标相对比, 来判断是否隐藏键盘;
+     * 当用户点击EditText时则不能隐藏
+     * @param v
+     * @param event
+     * @return
+     */
+    private boolean isShouldHideKeyboard(View v, MotionEvent event) {
+        if (v instanceof EditText) {
+            int[] location = {0, 0};
+            v.getLocationInWindow(location);
+            int left = location[0],
+                    top = location[1],
+                    bottom = top + v.getHeight(),
+                    right = left + v.getWidth();
+            if (event.getX() > left
+                    && event.getX() < right
+                    && event.getY() > top
+                    && event.getY() < bottom) {
+                return false; /* 点击EditText的事件，忽略它 */
+            } else {
+                v.clearFocus();
+                return true;
+            }
+        }
+
+        // 如果焦点不是EditText则忽略, 这个发生在视图刚绘制完,
+        // 第一个焦点不在EditText上, 和用户用轨迹球选择其他的焦点
+        return false;
+    }
+
+    @NonNull
+    @Override
+    public final Observable<ActivityEvent> lifecycle() {
+        return lifecycleEvent.hide();
+    }
+
+    @Override
+    public final <T> LifecycleTransformer<T> bindUntilEvent(@NonNull ActivityEvent event) {
+        return RxLifecycle.bindUntilEvent(lifecycleEvent, event);
+    }
+
+    @Override
+    public final <T> LifecycleTransformer<T> bindToLifecycle() {
+        return RxLifecycle.bind(lifecycleEvent, this);
+    }
+
+    /**
+     * 无须调用此方法, 来至{@link Function}接口中的方法访问修饰符只能是public
+     * @param lastEvent
+     */
+    @Override
+    public final ActivityEvent apply(ActivityEvent lastEvent) throws Exception {
+        switch (lastEvent) {
+            case CREATE:
+                return ActivityEvent.DESTROY;
+            case START:
+                return ActivityEvent.STOP;
+            case RESUME:
+                return ActivityEvent.PAUSE;
+            case PAUSE:
+                return ActivityEvent.STOP;
+            case STOP:
+                return ActivityEvent.DESTROY;
+            case DESTROY:
+                throw new OutsideLifecycleException("Cannot bind to Activity lifecycle when outside of it.");
+            default:
+                throw new UnsupportedOperationException("Binding to " + lastEvent + " not yet implemented");
+        }
+    }
+
 }

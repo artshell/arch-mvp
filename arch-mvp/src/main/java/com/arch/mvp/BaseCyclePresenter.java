@@ -43,7 +43,7 @@ public class BaseCyclePresenter<V extends BaseContract.View> extends BasePresent
     private final Subject<Lifecycle.Event> presenterCycle = BehaviorSubject.<Lifecycle.Event>create().toSerialized();
 
     /**
-     * 务须调用此方法, 来之{@link DefaultLifecycleObserver}接口中的方法访问修饰符只能是public
+     * 无须调用此方法, 来至{@link DefaultLifecycleObserver}接口中的方法访问修饰符只能是public
      * 可以考虑继承{@link BasePresenter}实现扩展需求
      * @param owner
      */
@@ -54,7 +54,7 @@ public class BaseCyclePresenter<V extends BaseContract.View> extends BasePresent
     }
 
     /**
-     * 务须调用此方法, 来之{@link DefaultLifecycleObserver}接口中的方法访问修饰符只能是public
+     * 无须调用此方法, 来至{@link DefaultLifecycleObserver}接口中的方法访问修饰符只能是public
      * 可以考虑继承{@link BasePresenter}实现扩展需求
      * @param owner
      */
@@ -65,7 +65,7 @@ public class BaseCyclePresenter<V extends BaseContract.View> extends BasePresent
     }
 
     /**
-     * 务须调用此方法, 来之{@link DefaultLifecycleObserver}接口中的方法访问修饰符只能是public
+     * 无须调用此方法, 来至{@link DefaultLifecycleObserver}接口中的方法访问修饰符只能是public
      * 可以考虑继承{@link BasePresenter}实现扩展需求
      * @param owner
      */
@@ -76,7 +76,7 @@ public class BaseCyclePresenter<V extends BaseContract.View> extends BasePresent
     }
 
     /**
-     * 务须调用此方法, 来之{@link DefaultLifecycleObserver}接口中的方法访问修饰符只能是public
+     * 无须调用此方法, 来至{@link DefaultLifecycleObserver}接口中的方法访问修饰符只能是public
      * 可以考虑继承{@link BasePresenter}实现扩展需求
      * @param owner
      */
@@ -87,7 +87,7 @@ public class BaseCyclePresenter<V extends BaseContract.View> extends BasePresent
     }
 
     /**
-     * 务须调用此方法, 来之{@link DefaultLifecycleObserver}接口中的方法访问修饰符只能是public
+     * 无须调用此方法, 来至{@link DefaultLifecycleObserver}接口中的方法访问修饰符只能是public
      * 可以考虑继承{@link BasePresenter}实现扩展需求
      * @param owner
      */
@@ -98,7 +98,7 @@ public class BaseCyclePresenter<V extends BaseContract.View> extends BasePresent
     }
 
     /**
-     * 务须调用此方法, 来之{@link DefaultLifecycleObserver}接口中的方法访问修饰符只能是public
+     * 无须调用此方法, 来至{@link DefaultLifecycleObserver}接口中的方法访问修饰符只能是public
      * 可以考虑继承{@link BasePresenter}实现扩展需求
      * @param owner
      */
@@ -129,6 +129,11 @@ public class BaseCyclePresenter<V extends BaseContract.View> extends BasePresent
         return RxLifecycle.bind(presenterCycle, this);
     }
 
+    /**
+     * 无须调用此方法, 来至{@link Function}接口中的方法访问修饰符只能是public
+     * 可以考虑继承{@link BasePresenter}实现扩展需求
+     * @param lastEvent
+     */
     @Override
     public final Lifecycle.Event apply(Lifecycle.Event lastEvent) throws Exception {
         switch (lastEvent) {

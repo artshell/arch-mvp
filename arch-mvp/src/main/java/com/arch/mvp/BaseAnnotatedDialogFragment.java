@@ -42,7 +42,7 @@ public class BaseAnnotatedDialogFragment<V extends BaseContract.View, P extends 
         if (layoutResId != Viewable.LAYOUT_NOT_DEFINED) {
             return inflater.inflate(layoutResId, container, false);
         }
-        return null;
+        return super.onCreateView(inflater, container, savedState);
     }
 
     @SuppressWarnings("unchecked")
