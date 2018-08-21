@@ -32,12 +32,11 @@ import android.view.ViewGroup;
 
 import com.trello.rxlifecycle2.LifecycleProvider;
 import com.trello.rxlifecycle2.LifecycleTransformer;
-import com.trello.rxlifecycle2.OutsideLifecycleException;
 import com.trello.rxlifecycle2.RxLifecycle;
 import com.trello.rxlifecycle2.android.FragmentEvent;
+import com.trello.rxlifecycle2.android.RxLifecycleAndroid;
 
 import io.reactivex.Observable;
-import io.reactivex.functions.Function;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
@@ -47,9 +46,7 @@ import io.reactivex.subjects.Subject;
  */
 public abstract class BaseV4Fragment<V extends BaseContract.View, P extends BaseContract.Presenter<V>>
         extends Fragment
-        implements BaseContract.View,
-        LifecycleProvider<FragmentEvent>,
-        Function<FragmentEvent, FragmentEvent> {
+        implements BaseContract.View, LifecycleProvider<FragmentEvent> {
 
     protected P presenter;
     
@@ -181,39 +178,7 @@ public abstract class BaseV4Fragment<V extends BaseContract.View, P extends Base
 
     @Override
     public final <T> LifecycleTransformer<T> bindToLifecycle() {
-        return RxLifecycle.bind(lifecycleEvent, this);
-    }
-
-    /**
-     * 无须调用此方法, 来至{@link Function}接口中的方法访问修饰符只能是public
-     * @param lastEvent
-     */
-    @Override
-    public final FragmentEvent apply(FragmentEvent lastEvent) throws Exception {
-        switch (lastEvent) {
-            case ATTACH:
-                return FragmentEvent.DETACH;
-            case CREATE:
-                return FragmentEvent.DESTROY;
-            case CREATE_VIEW:
-                return FragmentEvent.DESTROY_VIEW;
-            case START:
-                return FragmentEvent.STOP;
-            case RESUME:
-                return FragmentEvent.PAUSE;
-            case PAUSE:
-                return FragmentEvent.STOP;
-            case STOP:
-                return FragmentEvent.DESTROY_VIEW;
-            case DESTROY_VIEW:
-                return FragmentEvent.DESTROY;
-            case DESTROY:
-                return FragmentEvent.DETACH;
-            case DETACH:
-                throw new OutsideLifecycleException("Cannot bind to Fragment lifecycle when outside of it.");
-            default:
-                throw new UnsupportedOperationException("Binding to " + lastEvent + " not yet implemented");
-        }
+        return RxLifecycleAndroid.bindFragment(lifecycleEvent);
     }
 
     /**

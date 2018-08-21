@@ -28,7 +28,7 @@ import com.trello.rxlifecycle2.RxLifecycle;
 
 import io.reactivex.Observable;
 import io.reactivex.functions.Function;
-import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
 /**
@@ -38,9 +38,9 @@ import io.reactivex.subjects.Subject;
  * @author artshell on 2018/5/6
  */
 public class BaseCyclePresenter<V extends BaseContract.View> extends BasePresenter<V>
-        implements LifecycleProvider<Lifecycle.Event>, Function<Lifecycle.Event, Lifecycle.Event> {
+        implements LifecycleProvider<Lifecycle.Event> {
 
-    private final Subject<Lifecycle.Event> presenterCycle = BehaviorSubject.<Lifecycle.Event>create().toSerialized();
+    private final Subject<Lifecycle.Event> presenterCycle = PublishSubject.<Lifecycle.Event>create().toSerialized();
 
     /**
      * 无须调用此方法, 来至{@link DefaultLifecycleObserver}接口中的方法访问修饰符只能是public
@@ -126,17 +126,11 @@ public class BaseCyclePresenter<V extends BaseContract.View> extends BasePresent
     @CheckResult
     @Override
     public final <T> LifecycleTransformer<T> bindToLifecycle() {
-        return RxLifecycle.bind(presenterCycle, this);
+        return RxLifecycle.bind(presenterCycle, PRESENTER_LIFECYCLE);
     }
 
-    /**
-     * 无须调用此方法, 来至{@link Function}接口中的方法访问修饰符只能是public
-     * 可以考虑继承{@link BasePresenter}实现扩展需求
-     * @param lastEvent
-     */
-    @Override
-    public final Lifecycle.Event apply(Lifecycle.Event lastEvent) throws Exception {
-        switch (lastEvent) {
+    private static final Function<Lifecycle.Event, Lifecycle.Event> PRESENTER_LIFECYCLE = event -> {
+        switch (event) {
             case ON_CREATE:
                 return Lifecycle.Event.ON_DESTROY;
             case ON_START:
@@ -150,7 +144,7 @@ public class BaseCyclePresenter<V extends BaseContract.View> extends BasePresent
             case ON_DESTROY:
                 throw new OutsideLifecycleException("Cannot bind to LifecycleOwner's lifecycle when outside of it.");
             default:
-                throw new UnsupportedOperationException("Binding to " + lastEvent + " not yet implemented");
+                throw new UnsupportedOperationException("Binding to " + event + " not yet implemented");
         }
-    }
+    };
 }

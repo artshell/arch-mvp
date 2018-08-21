@@ -16,6 +16,12 @@ android {
         targetCompatibility 1.8
     }
 
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:unchecked"
+        }
+    }
+
     dexOptions {
         preDexLibraries true
         maxProcessCount 2

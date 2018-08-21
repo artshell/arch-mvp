@@ -30,12 +30,11 @@ import android.widget.EditText;
 
 import com.trello.rxlifecycle2.LifecycleProvider;
 import com.trello.rxlifecycle2.LifecycleTransformer;
-import com.trello.rxlifecycle2.OutsideLifecycleException;
 import com.trello.rxlifecycle2.RxLifecycle;
 import com.trello.rxlifecycle2.android.ActivityEvent;
+import com.trello.rxlifecycle2.android.RxLifecycleAndroid;
 
 import io.reactivex.Observable;
-import io.reactivex.functions.Function;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
@@ -45,9 +44,7 @@ import io.reactivex.subjects.Subject;
  */
 public abstract class BaseActivity<V extends BaseContract.View, P extends BaseContract.Presenter<V>>
         extends AppCompatActivity
-        implements BaseContract.View,
-        LifecycleProvider<ActivityEvent>,
-        Function<ActivityEvent, ActivityEvent> {
+        implements BaseContract.View, LifecycleProvider<ActivityEvent> {
 
     protected P presenter;
     
@@ -184,31 +181,7 @@ public abstract class BaseActivity<V extends BaseContract.View, P extends BaseCo
 
     @Override
     public final <T> LifecycleTransformer<T> bindToLifecycle() {
-        return RxLifecycle.bind(lifecycleEvent, this);
-    }
-
-    /**
-     * 无须调用此方法, 来至{@link Function}接口中的方法访问修饰符只能是public
-     * @param lastEvent
-     */
-    @Override
-    public final ActivityEvent apply(ActivityEvent lastEvent) throws Exception {
-        switch (lastEvent) {
-            case CREATE:
-                return ActivityEvent.DESTROY;
-            case START:
-                return ActivityEvent.STOP;
-            case RESUME:
-                return ActivityEvent.PAUSE;
-            case PAUSE:
-                return ActivityEvent.STOP;
-            case STOP:
-                return ActivityEvent.DESTROY;
-            case DESTROY:
-                throw new OutsideLifecycleException("Cannot bind to Activity lifecycle when outside of it.");
-            default:
-                throw new UnsupportedOperationException("Binding to " + lastEvent + " not yet implemented");
-        }
+        return RxLifecycleAndroid.bindActivity(lifecycleEvent);
     }
 
 }
