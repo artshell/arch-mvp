@@ -20,9 +20,11 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 
 /**
+ * @see Viewable
+ *
  * Created by Chatikyan on 29.06.2017.
  */
-public abstract class BaseAnnotatedActivity<V extends BaseContract.View, P extends BaseContract.Presenter<V>>
+public class BaseAnnotatedActivity<V extends BaseContract.View, P extends BaseContract.Presenter<V>>
         extends BaseActivity<V, P> {
 
     @CallSuper
@@ -37,7 +39,7 @@ public abstract class BaseAnnotatedActivity<V extends BaseContract.View, P exten
 
     @SuppressWarnings("unchecked")
     @Override
-    protected P initPresenter() {
+    protected final P initPresenter() {
         return (P) AnnotationHelper.createPresenter(getClass());
     }
 }

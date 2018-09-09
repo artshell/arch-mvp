@@ -81,9 +81,8 @@ public class BasePresenter<V extends BaseContract.View>
                 : stateBundle;
     }
 
-    @CallSuper
     @Override
-    public void onAppContext(@NonNull Context appContext) {
+    public final void onAppContext(@NonNull Context appContext) {
         context = appContext;
     }
 

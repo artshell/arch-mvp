@@ -4,7 +4,7 @@ modified from [MVP-Architecture-Components](https://github.com/armcha/MVP-Archit
 #### Usage
 ##### Add dependencies
 ```groovy
-implementation 'com.arch.mvp:arch-mvp:1.0.4'
+implementation 'com.arch.mvp:arch-mvp:1.0.5'
 ```
 
 ##### In you `build.gradle` add setting

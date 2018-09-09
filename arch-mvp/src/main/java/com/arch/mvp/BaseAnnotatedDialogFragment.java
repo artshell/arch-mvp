@@ -24,6 +24,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
+ * @see Viewable
+ *
  * @author artshell on 2018/5/17
  */
 public class BaseAnnotatedDialogFragment<V extends BaseContract.View, P extends BaseContract.Presenter<V>>
@@ -47,7 +49,7 @@ public class BaseAnnotatedDialogFragment<V extends BaseContract.View, P extends 
 
     @SuppressWarnings("unchecked")
     @Override
-    protected P initPresenter() {
+    protected final P initPresenter() {
         return (P) AnnotationHelper.createPresenter(getClass());
     }
 }

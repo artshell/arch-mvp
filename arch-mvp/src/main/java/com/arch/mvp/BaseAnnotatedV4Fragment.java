@@ -17,6 +17,7 @@
 package com.arch.mvp;
 
 import android.os.Bundle;
+import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -24,12 +25,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
+ * @see Viewable
+ *
  * Created by Chatikyan on 29.06.2017.
  * Modified by artshell
  */
 public class BaseAnnotatedV4Fragment<V extends BaseContract.View, P extends BaseContract.Presenter<V>>
         extends BaseV4Fragment<V, P> {
 
+    @CallSuper
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedState) {
@@ -42,7 +46,7 @@ public class BaseAnnotatedV4Fragment<V extends BaseContract.View, P extends Base
 
     @SuppressWarnings("unchecked")
     @Override
-    protected P initPresenter() {
+    protected final P initPresenter() {
         return (P) AnnotationHelper.createPresenter(getClass());
     }
 }
